@@ -1,7 +1,10 @@
 package baseball.domain;
 
 import static nextstep.utils.Randoms.pickNumberInRange;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public class BaseballGame {
 
 	final private int COUNT_OF_DIGITS = 3;
@@ -17,6 +20,7 @@ public class BaseballGame {
 	/**
 	 * Game Player
 	 */
+	@Getter
 	class Player {
 		/**
 		 * Player 가 입력한 값
@@ -36,6 +40,8 @@ public class BaseballGame {
 	/**
 	 * Game Computer
 	 */
+	@Getter
+	@Setter
 	class Computer {
 
 		/**
@@ -73,7 +79,7 @@ public class BaseballGame {
 			return target != null && target.equals(source);
 		}
 
-		private void generateHint(String input) {
+		public void generateHint(String input) {
 			strike = 0;
 			ball = 0;
 
