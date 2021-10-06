@@ -4,6 +4,7 @@ import static nextstep.utils.Randoms.*;
 
 import baseball.view.BaseballGameView;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class BaseballGame {
@@ -41,7 +42,7 @@ public class BaseballGame {
 			return readGameOverInput();
 		}
 
-		private String readGameOnInput() {
+		public String readGameOnInput() {
 			BaseballGameView.requestNumberInput();
 			input = BaseballGameView.read();
 
@@ -53,7 +54,7 @@ public class BaseballGame {
 			return input;
 		}
 
-		private String readGameOverInput() {
+		public String readGameOverInput() {
 			BaseballGameView.requestGameRestartInput();
 			input = BaseballGameView.read();
 
@@ -86,6 +87,7 @@ public class BaseballGame {
 	 * Game Computer
 	 */
 	@Getter
+	@Setter
 	class Computer {
 
 		/**
@@ -123,7 +125,7 @@ public class BaseballGame {
 			return target != null && target.equals(source);
 		}
 
-		private void generateHint(String input) {
+		public void generateHint(String input) {
 			strike = 0;
 			ball = 0;
 
