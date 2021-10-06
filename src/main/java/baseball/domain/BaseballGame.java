@@ -23,6 +23,20 @@ public class BaseballGame {
 		player = new Player();
 	}
 
+	public void start() {
+		this.gameOver = false;
+		computer.resetTarget();
+
+		while (!computer.isTarget(player.input)) {
+			computer.generateHint(player.readInput());
+		}
+
+		computer.gameOver();
+		if (computer.decideIfGameRestart(player.readInput())) {
+			start();
+		}
+	}
+
 	/**
 	 * Game Player
 	 */
@@ -159,6 +173,15 @@ public class BaseballGame {
 				result.append("낫싱");
 			}
 			return result.toString();
+		}
+
+		public void gameOver() {
+			BaseballGameView.gameOver();
+			gameOver = true;
+		}
+
+		public boolean decideIfGameRestart(String input) {
+			return "1".equals(input);
 		}
 	}
 
