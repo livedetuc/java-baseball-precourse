@@ -1,8 +1,9 @@
 package baseball.domain;
 
-import static nextstep.utils.Randoms.pickNumberInRange;
+import static nextstep.utils.Randoms.*;
+
+import baseball.view.BaseballGameView;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class BaseballGame {
@@ -11,6 +12,10 @@ public class BaseballGame {
 
 	private Computer computer;
 	private Player player;
+	/**
+	 *  게임 종료 여부: Player 가 정답을 맞히면 게임 종료
+	 */
+	private boolean gameOver;
 
 	public BaseballGame() {
 		computer = new Computer();
@@ -23,16 +28,56 @@ public class BaseballGame {
 	@Getter
 	class Player {
 		/**
-		 * Player 가 입력한 값
+		 * Player 가 입력한 수
 		 */
 		private String input;
 
 		public String readInput() {
-			return "";
+			if (!gameOver) {
+				// Player 가 입력한 세자리 수
+				return readGameOnInput();
+			}
+			// Player 가 입력한 game 재시작 여부 (1 or 2)
+			return readGameOverInput();
+		}
+
+		private String readGameOnInput() {
+			BaseballGameView.requestNumberInput();
+			input = BaseballGameView.read();
+
+			if (!isValid(input)) {
+				BaseballGameView.wrongInput();
+				readGameOnInput();
+			}
+
+			return input;
+		}
+
+		private String readGameOverInput() {
+			BaseballGameView.requestGameRestartInput();
+			input = BaseballGameView.read();
+
+			if (!isValid(input)) {
+				BaseballGameView.wrongInput();
+				readGameOverInput();
+			}
+			return input;
 		}
 
 		private boolean isValid(String input) {
-			return true;
+			if (!gameOver) {
+				return isNumeric(input) && input.length() == COUNT_OF_DIGITS;
+			}
+			return "1".equals(input) || "2".equals(input);
+		}
+
+		private boolean isNumeric(String input) {
+			try {
+				Integer.parseInt(input);
+				return true;
+			} catch (NumberFormatException e) {
+				return false;
+			}
 		}
 	}
 
@@ -41,7 +86,6 @@ public class BaseballGame {
 	 * Game Computer
 	 */
 	@Getter
-	@Setter
 	class Computer {
 
 		/**
@@ -79,13 +123,14 @@ public class BaseballGame {
 			return target != null && target.equals(source);
 		}
 
-		public void generateHint(String input) {
+		private void generateHint(String input) {
 			strike = 0;
 			ball = 0;
 
 			for (int i = 0; i < COUNT_OF_DIGITS; i++) {
 				generateHint(input, i);
 			}
+			BaseballGameView.println(hintToString());
 		}
 
 		private void generateHint(String input, int index) {
