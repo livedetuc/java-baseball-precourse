@@ -1,5 +1,7 @@
 package baseball.domain;
 
+import static nextstep.utils.Randoms.pickNumberInRange;
+
 public class BaseballGame {
 
 	final private int COUNT_OF_DIGITS = 3;
@@ -49,8 +51,22 @@ public class BaseballGame {
 		private int strike;
 		private int ball;
 
-		public void resetTarget() {
-			target = "";
+		public String resetTarget() {
+			StringBuilder result = new StringBuilder();
+			for (int i = 0; i < COUNT_OF_DIGITS; i++) {
+				result.append(getUniqueRandomNumber(result.toString()));
+			}
+			target = result.toString();
+			return target;
+		}
+
+		private int getUniqueRandomNumber(String digits) {
+			int newDigit = pickNumberInRange(1, 9);
+			// target 에 중복되는 숫자가 없도록 하기 위해
+			while (digits.contains(newDigit + "")) {
+				newDigit = pickNumberInRange(1, 9);
+			}
+			return newDigit;
 		}
 
 		public boolean isTarget(String source) {
@@ -60,6 +76,36 @@ public class BaseballGame {
 		private void generateHint(String input) {
 			strike = 0;
 			ball = 0;
+
+			for (int i = 0; i < COUNT_OF_DIGITS; i++) {
+				generateHint(input, i);
+			}
+		}
+
+		private void generateHint(String input, int index) {
+			// 같은 수, 같은 자리에 있으면 strike
+			if (input.charAt(index) == target.charAt(index)) {
+				strike++;
+				return;
+			}
+			// 같은 수, 다른 자리에 있으면 ball
+			if (target.indexOf(input.charAt(index)) > -1) {
+				ball++;
+			}
+		}
+
+		public String hintToString() {
+			StringBuilder result = new StringBuilder();
+			if (strike != 0) {
+				result.append(String.format("%d스트라이크 ", strike));
+			}
+			if (ball != 0) {
+				result.append(String.format("%d볼", ball));
+			}
+			if (strike == 0 && ball == 0) {
+				result.append("낫싱");
+			}
+			return result.toString();
 		}
 	}
 
